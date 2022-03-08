@@ -92,6 +92,21 @@ public class Ghost : MonoBehaviour
                     Debug.DrawLine(transform.position, target.transform.position, Color.cyan, 0.1f);
                     break;
                 case "Clyde":
+                    float distanceToPlayer = Vector3.Distance(
+                        transform.position, player.transform.position);
+                    //Debug.Log("Clyde distance = " + distanceToPlayer);
+                    if (Mathf.Abs(distanceToPlayer) <= 8f)
+                    {
+                        target = scatterPoint;
+                        Debug.DrawLine(transform.position, target.transform.position, 
+                            Color.yellow, 0.1f);
+                    }
+                    else 
+                    {
+                        target = player;
+                        Debug.DrawLine(transform.position, target.transform.position,
+                            Color.yellow, 0.1f);
+                    }
                     break;
                 case null:
                     print("ERROR; no ghost found");
@@ -100,7 +115,6 @@ public class Ghost : MonoBehaviour
         }
         else
         {
-
             target = scatterPoint;
             Debug.DrawLine(transform.position, target.transform.position, Color.red, 0.1f);
         }
@@ -575,6 +589,7 @@ public class Ghost : MonoBehaviour
 
     private void Move(GameObject nextTile)
     {
+
 
         if (Mathf.Abs(Vector3.Distance(transform.position, nextTile.transform.position)) >= 0.001f)
         {

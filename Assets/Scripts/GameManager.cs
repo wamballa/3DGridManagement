@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// https://gameinternals.com/understanding-pac-man-ghost-behavior#:~:text=The%20purpose%20of%20the%20game%20is%20very%20simple,four%20ghosts%20that%20pursue%20Pac-Man%20through%20the%20maze.
+
 public class GameManager : MonoBehaviour
 {
     // Reference variables
@@ -10,8 +12,8 @@ public class GameManager : MonoBehaviour
     public Ghost inky;
     public Ghost clyde;
     // Targets
-    public GameObject pinkyTarget;
-    public GameObject inkyTarget;
+    [HideInInspector] public GameObject pinkyTarget;
+    [HideInInspector] public GameObject inkyTarget;
 
 
     // Start is called before the first frame update
@@ -44,7 +46,7 @@ public class GameManager : MonoBehaviour
     public void SetInkyTarget(GameObject target)
     {
         inkyTarget = target;
-        print("inky target = " + inkyTarget);
+        //print("inky target = " + inkyTarget);
     }
     public GameObject GetInkyTarget()
     {

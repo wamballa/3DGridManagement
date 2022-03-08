@@ -90,7 +90,7 @@ public class InkyForecastPosition : MonoBehaviour
         //nextBlock.transform.position = targetPosition;
         transform.position = targetPosition;
 
-        Vector3 inkysPosition = GameObject.Find("Inky").GetComponent<Transform>().position;
+        //Vector3 inkysPosition = GameObject.Find("Inky").GetComponent<Transform>().position;
 
         return transform.gameObject;
 
