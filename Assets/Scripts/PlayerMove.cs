@@ -39,34 +39,42 @@ public class PlayerMove : MonoBehaviour
         {
             transform.rotation = upDirection;
             nextBlock = GetForwardBlock();
-            if (nextBlock != null)
-            {
-                float zPos = transform.position.z;
-                zPos = zPos + 1f;
-                transform.position = new Vector3(
-                    transform.position.x,
-                    transform.position.y,
-                    zPos
-                    );
-                pinkyForecastMarker.position = transform.position;
-                pinkyForecastMarker.rotation = transform.rotation;
-                inkyForecastMarker.position = transform.position;
-                inkyForecastMarker.rotation = transform.rotation;
-                gameManager.SetPinkyTarget(pinkyForecastPosition.GetPinkyTargetBlock(nextBlock));
-                gameManager.SetInkyTarget(inkyForecastPosition.GetInkyTargetBlock(nextBlock));
-            }
+
+            transform.position = transform.position + transform.forward;
+
+            //if (nextBlock != null)
+            //{
+            //    float zPos = transform.position.z;
+            //    zPos = zPos + 1f;
+            //    transform.position = new Vector3(
+            //        transform.position.x,
+            //        transform.position.y,
+            //        zPos
+            //        );
+            pinkyForecastMarker.position = transform.position;
+            pinkyForecastMarker.rotation = transform.rotation;
+            inkyForecastMarker.position = transform.position;
+            inkyForecastMarker.rotation = transform.rotation;
+            gameManager.SetPinkyTarget(pinkyForecastPosition.GetPinkyTargetBlock(nextBlock));
+            gameManager.SetInkyTarget(inkyForecastPosition.GetInkyTargetBlock(nextBlock));
+            //}
 
         }
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
+            nextBlock = GetForwardBlock();
             transform.rotation = downDirection;
-            float zPos = transform.position.z;
-            zPos = zPos - 1f;
-            transform.position = new Vector3(
-                transform.position.x,
-                transform.position.y,
-                zPos
-                );
+
+            //float zPos = transform.position.z;
+            //zPos = zPos - 1f;
+            //transform.position = new Vector3(
+            //    transform.position.x,
+            //    transform.position.y,
+            //    zPos
+            //    );
+
+            transform.position = transform.position + transform.forward;
+
             pinkyForecastMarker.position = transform.position;
             pinkyForecastMarker.rotation = transform.rotation;
             inkyForecastMarker.position = transform.position;
@@ -80,46 +88,43 @@ public class PlayerMove : MonoBehaviour
             transform.rotation = leftDirection;
             nextBlock = GetForwardBlock();
 
-            if (nextBlock != null)
-            {
-                float xPos = transform.position.x;
-                xPos = xPos - 1f;
-                transform.position = new Vector3(
-                    xPos,
-                    transform.position.y,
-                    transform.position.z
-                );
-                pinkyForecastMarker.position = transform.position;
-                pinkyForecastMarker.rotation = transform.rotation;
-                inkyForecastMarker.position = transform.position;
-                inkyForecastMarker.rotation = transform.rotation;
-                gameManager.SetPinkyTarget(pinkyForecastPosition.GetPinkyTargetBlock(nextBlock));
-                gameManager.SetInkyTarget(inkyForecastPosition.GetInkyTargetBlock(nextBlock));
-            }
+            //float xPos = transform.position.x;
+            //xPos = xPos - 1f;
+            //transform.position = new Vector3(
+            //    xPos,
+            //    transform.position.y,
+            //    transform.position.z
+            //);
+
+            transform.position = transform.position + transform.forward;
+
+            pinkyForecastMarker.position = transform.position;
+            pinkyForecastMarker.rotation = transform.rotation;
+            inkyForecastMarker.position = transform.position;
+            inkyForecastMarker.rotation = transform.rotation;
+            gameManager.SetPinkyTarget(pinkyForecastPosition.GetPinkyTargetBlock(nextBlock));
+            gameManager.SetInkyTarget(inkyForecastPosition.GetInkyTargetBlock(nextBlock));
+
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-
             transform.rotation = rightDirection;
             nextBlock = GetForwardBlock();
 
-            if (nextBlock != null)
-            {
-                //print(nextBlock.name);
-                float xPos = transform.position.x;
-                xPos = xPos + 1f;
-                transform.position = new Vector3(
-                    xPos,
-                    transform.position.y,
-                    transform.position.z
-                 );
-                pinkyForecastMarker.position = transform.position;
-                pinkyForecastMarker.rotation = transform.rotation;
-                inkyForecastMarker.position = transform.position;
-                inkyForecastMarker.rotation = transform.rotation;
-                gameManager.SetPinkyTarget(pinkyForecastPosition.GetPinkyTargetBlock(nextBlock));
-                gameManager.SetInkyTarget(inkyForecastPosition.GetInkyTargetBlock(nextBlock));
-            }
+            float xPos = transform.position.x;
+            xPos = xPos + 1f;
+            transform.position = new Vector3(
+                xPos,
+                transform.position.y,
+                transform.position.z
+             );
+            pinkyForecastMarker.position = transform.position;
+            pinkyForecastMarker.rotation = transform.rotation;
+            inkyForecastMarker.position = transform.position;
+            inkyForecastMarker.rotation = transform.rotation;
+            gameManager.SetPinkyTarget(pinkyForecastPosition.GetPinkyTargetBlock(nextBlock));
+            gameManager.SetInkyTarget(inkyForecastPosition.GetInkyTargetBlock(nextBlock));
+            //}
         }
 
         //print(GetCurrentBlock().name);
@@ -128,13 +133,15 @@ public class PlayerMove : MonoBehaviour
     GameObject GetForwardBlock()
     {
         RaycastHit hit;
-        Ray ray = new Ray(transform.position, transform.forward ) ;
+        Ray ray = new Ray(transform.position, transform.forward);
         if (Physics.Raycast(ray, out hit, dist))
         {
             return (hit.transform.gameObject);
         }
-        print("ERROR: Current block not found");
         return null;
+
+
+
     }
     GameObject GetCurrentBlock()
     {
@@ -151,7 +158,7 @@ public class PlayerMove : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.blue;
-        Gizmos.DrawRay(transform.position, transform.forward*2);
+        Gizmos.DrawRay(transform.position, transform.forward * 2);
 
         //Gizmos.color = Color.red;
         //Gizmos.DrawRay(transform.position, (transform.forward + transform.right) / 2.8f);

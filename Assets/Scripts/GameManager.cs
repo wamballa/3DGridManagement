@@ -12,14 +12,14 @@ public class GameManager : MonoBehaviour
     public Ghost inky;
     public Ghost clyde;
     // Targets
-    [HideInInspector] public GameObject pinkyTarget;
-    [HideInInspector] public GameObject inkyTarget;
+    [HideInInspector] public Vector3 pinkyTargetPos;
+    [HideInInspector] public Vector3 inkyTargetPos;
 
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -34,23 +34,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SetPinkyTarget(GameObject target)
+    public void SetPinkyTarget(Vector3 targetPos)
     {
-        pinkyTarget = target;
-        print("pinky target = " + pinkyTarget);
+        pinkyTargetPos = targetPos;
+        //print("pinky target = " + pinkyTarget);
     }
-    public GameObject GetPinkyTarget()
+    public Vector3 GetPinkyTarget()
     {
-        return pinkyTarget;
+        return pinkyTargetPos;
     }
-    public void SetInkyTarget(GameObject target)
+    public void SetInkyTarget(Vector3 targetPos)
     {
-        inkyTarget = target;
+        inkyTargetPos = targetPos;
         //print("inky target = " + inkyTarget);
     }
-    public GameObject GetInkyTarget()
+    public Vector3 GetInkyTarget()
     {
-        return inkyTarget;
+        return inkyTargetPos;
     }
 
 }

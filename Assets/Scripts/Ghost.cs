@@ -12,6 +12,7 @@ public class Ghost : MonoBehaviour
     public GameObject player;
     public GameObject scatterPoint;
     public GameManager gameManager;
+    public GameObject testBlock;
 
     // Movement variables
     //float range = 10f;
@@ -20,10 +21,11 @@ public class Ghost : MonoBehaviour
     GameObject nextBlock;
     bool canMove;
     bool hasNextBlock = false;
-    float speed = 2f;
+    float speed = 6f;
     float rayCastLength = 1f;
 
     private GameObject target;
+    private Vector3 targetPos;
 
     // Mode variables
     private bool isChasemode = true;
@@ -64,7 +66,7 @@ public class Ghost : MonoBehaviour
     void Start()
     {
         ghostName = transform.name;
-        print("Start ghost script for "+transform.name);
+        print("Start ghost script for " + transform.name);
     }
 
     // Update is called once per frame
@@ -78,18 +80,18 @@ public class Ghost : MonoBehaviour
             switch (ghostName)
             {
                 case "Pinky":
-                    target = gameManager.GetPinkyTarget();
-                    if (target == null) target = player;
-                    Debug.DrawLine(transform.position, target.transform.position, Color.magenta, 0.1f);
+                    targetPos = gameManager.GetPinkyTarget();
+                    if (targetPos == null) target = player;
+                    Debug.DrawLine(transform.position, targetPos, Color.magenta, 0.1f);
                     break;
                 case "Blinky":
-                    target = player;
-                    Debug.DrawLine(transform.position, target.transform.position, Color.red, 0.1f);
+                    targetPos = player.transform.position;
+                    Debug.DrawLine(transform.position, targetPos, Color.red, 0.1f);
                     break;
                 case "Inky":
-                    target = gameManager.GetInkyTarget();
-                    if (target == null) target = player;
-                    Debug.DrawLine(transform.position, target.transform.position, Color.cyan, 0.1f);
+                    targetPos = gameManager.GetInkyTarget();
+                    if (targetPos == null) target = player;
+                    Debug.DrawLine(transform.position, targetPos, Color.cyan, 0.1f);
                     break;
                 case "Clyde":
                     float distanceToPlayer = Vector3.Distance(
@@ -97,14 +99,14 @@ public class Ghost : MonoBehaviour
                     //Debug.Log("Clyde distance = " + distanceToPlayer);
                     if (Mathf.Abs(distanceToPlayer) <= 8f)
                     {
-                        target = scatterPoint;
-                        Debug.DrawLine(transform.position, target.transform.position, 
+                        targetPos = scatterPoint.transform.position;
+                        Debug.DrawLine(transform.position, targetPos,
                             Color.yellow, 0.1f);
                     }
-                    else 
+                    else
                     {
-                        target = player;
-                        Debug.DrawLine(transform.position, target.transform.position,
+                        targetPos = player.transform.position;
+                        Debug.DrawLine(transform.position, targetPos,
                             Color.yellow, 0.1f);
                     }
                     break;
@@ -115,30 +117,41 @@ public class Ghost : MonoBehaviour
         }
         else
         {
-            target = scatterPoint;
-            Debug.DrawLine(transform.position, target.transform.position, Color.red, 0.1f);
+            targetPos = scatterPoint.transform.position;
+            Debug.DrawLine(transform.position, targetPos, Color.red, 0.1f);
         }
 
         if (hasNextBlock == false)
         {
             nextBlock = GetForwardBlock();
-            hasNextBlock = true;
-            canMove = true;
-        }
-
-        if (canMove)
-        // MOVE
-        {
-            Move(nextBlock);
+            if (nextBlock == null)
+            {
+                MoveForward();
+            }
+            else
+            {
+                hasNextBlock = true;
+                canMove = true;
+            }
         }
         else
-        // TURN
         {
-            HandleRoatationsBasedOnPlayerPosition(nextBlock);
+            if (canMove)
+            // MOVE
+            {
+                Move(nextBlock);
+            }
+            else
+            // TURN
+            {
+                HandleRoatationsBasedOnPlayerPosition(nextBlock);
 
-            hasNextBlock = false;
-            canMove = false;
+                hasNextBlock = false;
+                canMove = false;
+            }
         }
+
+
     }
 
     private void OnTriggerEnter(Collider other)
@@ -219,8 +232,8 @@ public class Ghost : MonoBehaviour
             {
 
                 // Get neighbour blocks 
-                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -235,8 +248,8 @@ public class Ghost : MonoBehaviour
             else if (transform.localRotation == upDirection)
             {
                 // Get next block in a direction
-                float forwardDistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
-                float westDistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
+                float forwardDistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
+                float westDistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
 
                 if (forwardDistToTarget < westDistToTarget)
                 {
@@ -250,10 +263,10 @@ public class Ghost : MonoBehaviour
             // COMING DOWN ┤
             else if (transform.localRotation == downDirection)
             {
-               // print("Coming down");
+                // print("Coming down");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -274,8 +287,8 @@ public class Ghost : MonoBehaviour
             {
 
                 // Get neighbour blocks 
-                float tile1DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -289,10 +302,10 @@ public class Ghost : MonoBehaviour
             // COMING UP ╤
             else if (transform.localRotation == upDirection)
             {
-               // print("Coming up");
+                // print("Coming up");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -308,8 +321,8 @@ public class Ghost : MonoBehaviour
             {
                 //print("Coming left");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -330,8 +343,8 @@ public class Ghost : MonoBehaviour
             {
                 //print("Coming up");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -347,8 +360,8 @@ public class Ghost : MonoBehaviour
             {
                 //print("Coming down");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
                 //print("Coming down");
 
                 if (tile1DistToTarget < tile2DistToTarget)
@@ -366,8 +379,8 @@ public class Ghost : MonoBehaviour
             {
                 // Get next block
                 //print("Coming left");
-                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -388,8 +401,8 @@ public class Ghost : MonoBehaviour
             {
                 //print("Coming down");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -405,8 +418,8 @@ public class Ghost : MonoBehaviour
             {
                 //print("Coming left");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -422,8 +435,8 @@ public class Ghost : MonoBehaviour
             {
                 //print("Coming right");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
 
                 if (tile1DistToTarget < tile2DistToTarget)
                 {
@@ -446,9 +459,9 @@ public class Ghost : MonoBehaviour
             {
 
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
-                float tile3DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
+                float tile3DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
 
                 float min = Mathf.Min(Mathf.Min(tile1DistToTarget, tile2DistToTarget), tile3DistToTarget);
 
@@ -470,9 +483,9 @@ public class Ghost : MonoBehaviour
             {
                 //print("Coming up");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
-                float tile3DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
+                float tile3DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
 
                 float min = Mathf.Min(Mathf.Min(tile1DistToTarget, tile2DistToTarget), tile3DistToTarget);
 
@@ -492,11 +505,11 @@ public class Ghost : MonoBehaviour
             // Coming left ╬
             else if (transform.localRotation == leftDirection)
             {
-               // print("Coming left");
+                // print("Coming left");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
-                float tile3DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
+                float tile3DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
 
                 float min = Mathf.Min(Mathf.Min(tile1DistToTarget, tile2DistToTarget), tile3DistToTarget);
 
@@ -518,9 +531,9 @@ public class Ghost : MonoBehaviour
             {
                 //print("Coming right");
                 // Get next block in a direction
-                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), target.transform.position);
-                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), target.transform.position);
-                float tile3DistToTarget = Vector3.Distance(GetLeftBlockPos(), target.transform.position);
+                float tile1DistToTarget = Vector3.Distance(GetRightBlockPos(), targetPos);
+                float tile2DistToTarget = Vector3.Distance(GetForwardBlockPos(), targetPos);
+                float tile3DistToTarget = Vector3.Distance(GetLeftBlockPos(), targetPos);
 
                 float min = Mathf.Min(Mathf.Min(tile1DistToTarget, tile2DistToTarget), tile3DistToTarget);
 
@@ -543,7 +556,8 @@ public class Ghost : MonoBehaviour
 
     BlockType GetNextBlockType(GameObject tile)
     {
-        string tileTag = tile.transform.tag;
+        //string tileTag = tile.transform.tag;
+        string tileTag = tile.transform.name;
 
         switch (tileTag)
         {
@@ -580,11 +594,16 @@ public class Ghost : MonoBehaviour
                 return BlockType.none;
                 break;
             default:
-               // print("ERROR GetTileType");
+                // print("ERROR GetTileType");
                 return BlockType.none;
                 break;
         }
 
+    }
+
+    private void MoveForward()
+    {
+        transform.position += transform.forward * Time.deltaTime * speed;
     }
 
     private void Move(GameObject nextTile)
@@ -618,39 +637,50 @@ public class Ghost : MonoBehaviour
     }
     private Vector3 GetForwardBlockPos()
     {
-        RaycastHit hit;
-        Ray ray = new Ray(transform.position, transform.forward);
-        Debug.DrawRay(transform.position, transform.forward, Color.yellow, 1f);
-        if (Physics.Raycast(ray, out hit, rayCastLength))
-        {
-            return (hit.transform.position);
-        }
-       // print("null");
-        return Vector3.zero;
+        //RaycastHit hit;
+        //Ray ray = new Ray(transform.position, transform.forward);
+        Debug.DrawRay(transform.position, transform.forward, Color.yellow, 3f);
+
+        //GameObject go = Instantiate(testBlock, transform.position + transform.forward, Quaternion.identity);
+        //Vector3 newPos = transform.position + transform.forward;
+        //Debug.Log(" forward pos = " + newPos + " " + go.transform.position);
+
+        return (transform.position + transform.forward);
+
+        //if (Physics.Raycast(ray, out hit, rayCastLength))
+        //{
+        //    return (hit.transform.position);
+        //}
+        //// print("null");
+        //return Vector3.zero;
     }
     private Vector3 GetLeftBlockPos()
     {
-        RaycastHit hit;
-        Ray ray = new Ray(transform.position, -transform.right);
-        Debug.DrawRay(transform.position, -transform.right, Color.cyan, 1f);
-        if (Physics.Raycast(ray, out hit, rayCastLength))
-        {
-            return (hit.transform.position);
-        }
-       // print("null");
-        return Vector3.zero;
+        //RaycastHit hit;
+        //Ray ray = new Ray(transform.position, -transform.right);
+        Debug.DrawRay(transform.position, -transform.right, Color.cyan, 3f);
+
+        return (transform.position + -transform.right);
+
+        //if (Physics.Raycast(ray, out hit, rayCastLength))
+        //{
+        //    return (hit.transform.position);
+        //}
+        //// print("null");
+        //return Vector3.zero;
     }
     private Vector3 GetRightBlockPos()
     {
-        RaycastHit hit;
-        Ray ray = new Ray(transform.position, transform.right);
-        Debug.DrawRay(transform.position, transform.right, Color.red, 1f);
-        if (Physics.Raycast(ray, out hit, rayCastLength))
-        {
-            return (hit.transform.position);
-        }
-       // print("null");
-        return Vector3.zero;
+        //RaycastHit hit;
+        //Ray ray = new Ray(transform.position, transform.right);
+        Debug.DrawRay(transform.position, transform.right, Color.red, 3f);
+        return (transform.position + transform.right);
+        //if (Physics.Raycast(ray, out hit, rayCastLength))
+        //{
+        //    return (hit.transform.position);
+        //}
+        //// print("null");
+        //return Vector3.zero;
     }
     public void ToggleGhostMode()
     {
@@ -663,7 +693,7 @@ public class Ghost : MonoBehaviour
         {
             toggleText.text = "Scatter Mode";
         }
-        print("Toggle Chase Mode = "+isChasemode +" for "+transform.name);
+        //print("Toggle Chase Mode = " + isChasemode + " for " + transform.name);
     }
     private void OnDrawGizmos()
     {
