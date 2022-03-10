@@ -16,6 +16,8 @@ TagManager:
   - LeftRightDown
   - LeftRightUp
   - Cross
+  - Wall
+  - Block
   layers:
   - Default
   - TransparentFX
@@ -26,7 +28,7 @@ TagManager:
   - Maze
   - Ghosts
   - ScatterPpoints
-  - 
+  - Walls
   - 
   - 
   - 

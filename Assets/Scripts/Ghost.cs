@@ -21,7 +21,7 @@ public class Ghost : MonoBehaviour
     GameObject nextBlock;
     bool canMove;
     bool hasNextBlock = false;
-    float speed = 6f;
+    float speed = 3f;
     float rayCastLength = 1f;
 
     private GameObject target;
