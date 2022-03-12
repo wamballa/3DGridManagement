@@ -453,7 +453,7 @@ public class Ghost : MonoBehaviour
         // DECISION BLOCK - CROSS ╬
         else if (nextBlockType == BlockType.cross)
         {
-            //print("=>>>>>> " + transform.localRotation);
+            //print("=>>>>>> CROSS ");
             // Coming down ╬
             if (transform.localRotation == downDirection)
             {
@@ -557,9 +557,9 @@ public class Ghost : MonoBehaviour
     BlockType GetNextBlockType(GameObject tile)
     {
         //string tileTag = tile.transform.tag;
-        string tileTag = tile.transform.name;
+        string blockName = tile.transform.name;
 
-        switch (tileTag)
+        switch (blockName)
         {
             // DECISION BLOCKS ///////////////////////////////////////
             case "LeftUpDown":
